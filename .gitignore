@@ -1,0 +1,54 @@
+# Internal/Private (not for public repo)
+internal/
+GUIDE.md
+PLAN.md
+DEPLOY.md
+gpt-readme.md
+response-*.json
+.claude/
+
+# Old files (replaced by src/marvel_metadata/)
+/api/
+/marvel_year_scraper.py
+/build_sqlite.py
+
+# Data files (user generates locally or downloads release)
+data/*.jsonl
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.python-version
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/

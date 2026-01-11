@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Metadata API</title>
+    <meta name="description" content="Free API for Marvel Comics comic metadata.">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- RapiDoc -->
+    <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1f1f1f;
+            --border: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #707070;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --green: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.15s;
+        }
+
+        .header-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Overview Page */
+        .overview-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 64px 32px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 64px;
+        }
+
+        .stat {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Story Section */
+        .story {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 48px;
+        }
+
+        .story h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .story p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .story p:last-child {
+            margin-bottom: 0;
+        }
+
+        .story strong {
+            color: var(--text-primary);
+        }
+
+        .story a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .story a:hover {
+            text-decoration: underline;
+        }
+
+        .story blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+            margin: 24px 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .feature {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Quick Start */
+        .quickstart {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 48px;
+        }
+
+        .quickstart h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 2;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .code-comment { color: var(--text-muted); }
+        .code-cmd { color: var(--green); }
+        .code-string { color: #fbbf24; }
+
+        /* CTA */
+        .cta {
+            text-align: center;
+            padding: 48px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 48px;
+        }
+
+        .cta h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--accent);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* API Reference Page */
+        .api-page {
+            display: none;
+            height: calc(100vh - 69px);
+        }
+
+        .api-page.active {
+            display: block;
+        }
+
+        .overview-page.hidden {
+            display: none;
+        }
+
+        rapi-doc {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .features { grid-template-columns: 1fr; }
+            h1 { font-size: 32px; }
+            .header { padding: 12px 16px; }
+            .overview-page { padding: 32px 16px; }
+            .header-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="/static/logo.webp" alt="Logo" class="logo">
+            <span class="brand-name">Marvel Metadata API</span>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-btn active" onclick="showPage('overview')">Overview</button>
+            <button class="nav-btn" onclick="showPage('api')">API Reference</button>
+        </nav>
+        <div class="header-links">
+            <a href="https://github.com/emreparker/marvel-comics" target="_blank">GitHub</a>
+            <a href="/swagger">Swagger</a>
+        </div>
+    </header>
+
+    <!-- Overview Page -->
+    <div id="overview-page" class="overview-page">
+        <div class="hero">
+            <img src="/static/logo.webp" alt="Marvel Metadata" class="hero-logo">
+            <h1>Marvel Comics<br><span>Metadata API</span></h1>
+            <p class="subtitle">
+                Free, open-source API for Marvel comic metadata.
+                Search 37,500+ issues, browse by series, and build reading lists.
+            </p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">37.5K</div>
+                <div class="stat-label">Issues</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">6,990</div>
+                <div class="stat-label">Series</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">4,341</div>
+                <div class="stat-label">Creators</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">86</div>
+                <div class="stat-label">Years</div>
+            </div>
+        </div>
+
+        <div class="story">
+            <h2>Why This Exists</h2>
+            <p>
+                I subscribed to <strong>Marvel Comics</strong> wanting to read
+                <strong>Jonathan Hickman's Avengers run</strong> leading to <strong>Secret Wars (2015)</strong>.
+                But there was a problem:
+            </p>
+            <blockquote>
+                You can't create real reading lists. You can add issues to your Library,
+                or save links... but there's no good way to build a long, structured reading order.
+            </blockquote>
+            <p>
+                The reading order I wanted wasn't small. If you want Secret Wars to <em>hit</em>,
+                you need Hickman's entire run — Secret Warriors, Fantastic Four, FF, Ultimate Comics,
+                then Avengers and New Avengers. That's not a weekend checklist. That's a saga.
+            </p>
+            <p>
+                I went looking for the <strong>Marvel API</strong> — only to find it was shut down.
+                But I discovered <a href="https://marvel.geoffrich.net" target="_blank">marvel.geoffrich.net</a>,
+                a site with cached Marvel API data and direct Marvel Comics links.
+            </p>
+            <p>
+                So I built this: a <strong>searchable API</strong> and <strong>reading list builder</strong>
+                for anyone who wants to create their own Marvel reading lists.
+            </p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🔍 Full-Text Search</h3>
+                <p>Search across all 37,500+ issues by title. Find any comic instantly.</p>
+            </div>
+            <div class="feature">
+                <h3>📚 Browse by Series</h3>
+                <p>Get all issues in a series, sorted in publication order.</p>
+            </div>
+            <div class="feature">
+                <h3>✍️ Creator Lookup</h3>
+                <p>Find all issues by your favorite writers or artists.</p>
+            </div>
+            <div class="feature">
+                <h3>🔗 Direct MU Links</h3>
+                <p>Every issue includes a link that opens directly in Marvel Comics.</p>
+            </div>
+        </div>
+
+        <div class="story" style="margin-bottom: 48px;">
+            <h2>Rate Limits</h2>
+            <p>
+                <strong>60 requests per minute</strong> with a burst allowance of 30.
+                Rate limit headers are included in every response:
+            </p>
+            <div class="code-block" style="margin-top: 16px;">
+                <pre>X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 59</pre>
+            </div>
+        </div>
+
+        <div class="quickstart">
+            <h2>Quick Start</h2>
+            <div class="code-block">
+                <pre><span class="code-comment"># Search for issues</span>
+<span class="code-cmd">curl</span> <span class="code-string">"https://marvel.emreparker.com/v1/search/issues?q=secret+wars"</span>
+
+<span class="code-comment"># Get a specific issue</span>
+<span class="code-cmd">curl</span> <span class="code-string">"https://marvel.emreparker.com/v1/issues/52447"</span>
+
+<span class="code-comment"># Browse all issues in a series</span>
+<span class="code-cmd">curl</span> <span class="code-string">"https://marvel.emreparker.com/v1/series/16452/issues"</span>
+
+<span class="code-comment"># Find comics by Jonathan Hickman</span>
+<span class="code-cmd">curl</span> <span class="code-string">"https://marvel.emreparker.com/v1/creators/11743/issues"</span></pre>
+            </div>
+        </div>
+
+        <div class="cta">
+            <h2>Ready to explore the API?</h2>
+            <p>Check out the full API reference with interactive examples.</p>
+            <a href="javascript:showPage('api')" class="cta-btn">View API Reference →</a>
+        </div>
+
+        <div class="footer">
+            <p>
+                Unofficial project. Not affiliated with Marvel Entertainment.<br>
+                Contains metadata only. No comic content distributed.
+            </p>
+        </div>
+    </div>
+
+    <!-- API Reference Page -->
+    <div id="api-page" class="api-page">
+        <rapi-doc
+            spec-url="/openapi.json"
+            theme="dark"
+            bg-color="#0a0a0a"
+            text-color="#ffffff"
+            header-color="#141414"
+            primary-color="#ef4444"
+            nav-bg-color="#141414"
+            nav-text-color="#b0b0b0"
+            nav-hover-bg-color="#1f1f1f"
+            nav-hover-text-color="#ffffff"
+            nav-accent-color="#ef4444"
+            render-style="read"
+            schema-style="table"
+            schema-description-expanded="true"
+            default-schema-tab="example"
+            show-header="false"
+            show-info="true"
+            show-side-nav="true"
+            show-method-in-nav-bar="as-colored-block"
+            use-path-in-nav-bar="true"
+            nav-item-spacing="relaxed"
+            allow-authentication="false"
+            allow-server-selection="false"
+            allow-try="true"
+            fetch-credentials="omit"
+            font-size="large"
+            mono-font="JetBrains Mono, monospace"
+            regular-font="Inter, -apple-system, sans-serif"
+        ></rapi-doc>
+    </div>
+
+    <script>
+        function showPage(page) {
+            const overviewPage = document.getElementById('overview-page');
+            const apiPage = document.getElementById('api-page');
+            const navBtns = document.querySelectorAll('.nav-btn');
+
+            if (page === 'overview') {
+                overviewPage.classList.remove('hidden');
+                apiPage.classList.remove('active');
+                navBtns[0].classList.add('active');
+                navBtns[1].classList.remove('active');
+            } else {
+                overviewPage.classList.add('hidden');
+                apiPage.classList.add('active');
+                navBtns[0].classList.remove('active');
+                navBtns[1].classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

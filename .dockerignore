@@ -1,0 +1,29 @@
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Private files (scraper)
+internal/
+GUIDE.md
+PLAN.md
+
+# Raw data (only need the built database)
+response-*.json
+data/*.jsonl
+
+# Tests
+tests/
+.pytest_cache/
+
+# Claude
+.claude/
