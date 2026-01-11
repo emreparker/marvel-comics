@@ -12,8 +12,8 @@
 <p align="center">
   <a href="https://marvel.emreparker.com"><strong>Live API</strong></a> ·
   <a href="https://marvel.emreparker.com/swagger"><strong>Swagger UI</strong></a> ·
-  <a href="#-quickstart"><strong>Quickstart</strong></a> ·
-  <a href="#-reading-lists"><strong>Reading Lists</strong></a>
+  <a href="#quickstart"><strong>Quickstart</strong></a> ·
+  <a href="#reading-lists"><strong>Reading Lists</strong></a>
 </p>
 
 <p align="center">
